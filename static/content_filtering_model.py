@@ -21,11 +21,11 @@ class Model:
 		self.y = y
 		
 		self.model.fit(self.X, self.y)
-		self.get_optimal_threshold()
+		self._get_optimal_threshold()
 		filename = 'data/filtering_model.pkl'
 		pickle.dump(self, open(filename, 'wb'))
 
-	def get_optimal_threshold(self):
+	def _get_optimal_threshold(self):
 		fpr, tpr, threshold = roc_curve(self.y, self.predict_proba(self.X, threshold=True)[:,1])
 		i = np.arange(len(tpr)) 
 		roc = pd.DataFrame({'tf' : pd.Series(tpr-(1-fpr), index=i), 'threshold' : pd.Series(threshold, index=i)})
@@ -35,7 +35,7 @@ class Model:
 
 	def predict(self, X):
 		X = self.tfidf.transform(X)
-		predictions = self.model.predict(X)
+		predictions = (self.predict_proba(X)[:,1] > self.threshold)*1
 		return predictions
 
 	def predict_proba(self, X, threshold=False):
