@@ -1,0 +1,45 @@
+# Download Anaconda
+wget -S -T 10 -t 5 https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh -O $HOME/anaconda.sh
+# Install Anaconda
+bash $HOME/anaconda.sh -u -b -p $HOME/anaconda
+
+# Add Anaconda to current session's PATH
+export PATH=$HOME/anaconda/bin:$PATH
+# Add Anaconda to PATH for future sessions via .bashrc
+echo -e "\n\n# Anaconda" >> $HOME/.bashrc
+echo "export PATH=$HOME/anaconda/bin:$PATH" >> $HOME/.bashrc
+
+# Install necessary packages on Conda
+sudo apt update
+sudo apt-get install tmux
+sudo apt-get install git
+
+pip install flask
+pip install folium
+pip install flask-bootstrap
+pip install gunicorn
+pip install flask-script
+pip install flask-sqlalchemy
+pip install flask-migrate
+conda install psycopg2
+
+#setup ports
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8000
+sudo apt-get install iptables-persistent
+
+
+# add swap
+sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
+sudo /sbin/mkswap /var/swap.1
+sudo chmod 600 /var/swap.1
+sudo /sbin/swapon /var/swap.1
+
+# To enable it by default after reboot, add this line to /etc/fstab:
+/var/swap.1   swap    swap    defaults        0   0
+
+Note: Newer Linux kernels may rename your devices to /dev/xvdf through /dev/xvdp internally, even when the device name entered here (and shown in the details) is /dev/sdf through /dev/sdp.
+
+
+git clone https://github.com/kylejcaron/website.git
+
+scp ~/Desktop/my_website/website/static/data/models/ml_ft_enc.pth website_test:~/website/static/data/models/
